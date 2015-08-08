@@ -2,6 +2,8 @@
 V0.1
 Melhorado o sistema de verificação de termino de jogo.
 De 90 Linhas para 19
+V0.2
+Otimização no codigo do loop e do jogo, menos funções sendo chamadas pelo main.
 */
 
 #include <iostream>
@@ -17,17 +19,18 @@ class jogo
 		int vezesJogadas;
 		int *pPosicoesJogaveis;
 		int jogador, CPU;
+		int ganhador;
 
-		int verificarJogadaPermitida(int jogada);
 		void atualizarVezesJogadas(void) { vezesJogadas++; }
-		int atualizarpPosicoesJogaveis(int jogador, int jogada);
+		
+		int verificarJogadaPermitida(int jogada);
+		int jogar(int jogador, int jogada);
 		int verificarGanhador(void);
 		void print(void);
 		
 		jogo(void);
 		~jogo(void) { }
 		
-
 };
 
 
@@ -35,6 +38,7 @@ class jogo
 	
 		vezesJogadas = 0;
 		jogador = 0, CPU = 0;
+		ganhador = 0;
 		pPosicoesJogaveis = new int [ 9 ];
 		
 		for(int i = 0; i < 9; i++){
@@ -51,11 +55,14 @@ class jogo
 		else return 0;
 	}
 	
-	int jogo::atualizarpPosicoesJogaveis(int jogador, int jogada){
+	int jogo::jogar(int jogador, int jogada){
 		
 		if(verificarJogadaPermitida(jogada) == 0){
 			
 			pPosicoesJogaveis[jogada] = jogador;
+			atualizarVezesJogadas();
+			print();
+			if(vezesJogadas >= 3) ganhador = verificarGanhador();
 			return 0;
 		
 		}else return 1;
@@ -98,7 +105,6 @@ class jogo
 			
 		}
 		
-		
 		if(pPosicoesJogaveis[0] == jogador && pPosicoesJogaveis[4] == jogador && pPosicoesJogaveis[8] == jogador) return jogador;
 		else if(pPosicoesJogaveis[0] == CPU && pPosicoesJogaveis[4] == CPU && pPosicoesJogaveis[8] == CPU) return CPU;
 		else if(pPosicoesJogaveis[2] == jogador && pPosicoesJogaveis[4] == jogador && pPosicoesJogaveis[6] == jogador) return jogador;
@@ -114,8 +120,7 @@ int main(void){
 	jogo jogo1;
 	
 	int jogadaAtual = 0, sucesso = 1;
-	int ganhador = 0;
-
+	
 	jogo1.print();
 	//cin >> jogador >> endl; //Aqui vai a escolha do jogador.
 	
@@ -129,38 +134,32 @@ int main(void){
 		do{
 			//cin >> jogadaAtual >> endl; //Aqui vai a escolha do jogador.
 			jogadaAtual = rand() % 9;
-			sucesso = jogo1.atualizarpPosicoesJogaveis(jogo1.jogador, jogadaAtual);
+			sucesso = jogo1.jogar(jogo1.jogador, jogadaAtual);
 		}while(sucesso!=0);
 		
 		sucesso = 1;
-		jogo1.atualizarVezesJogadas();
-		jogo1.print();
 		
-		if(jogo1.vezesJogadas >= 3) ganhador = jogo1.verificarGanhador();
-		cout << " \nvezesJogadas: " << jogo1.vezesJogadas << " \nGanhador: " << ganhador;
+		cout << " \nvezesJogadas: " << jogo1.vezesJogadas << " \nGanhador: " << jogo1.ganhador;
 		
-		if(ganhador != 0) break;
+		if(jogo1.ganhador != 0) break;
 		
 		//CPU
 		do{
 			jogadaAtual = rand() % 9;
-			sucesso = jogo1.atualizarpPosicoesJogaveis(jogo1.CPU, jogadaAtual);
+			sucesso = jogo1.jogar(jogo1.CPU, jogadaAtual);
 		}while(sucesso!=0);
 		
 		sucesso = 1;
-		jogo1.atualizarVezesJogadas();
-		jogo1.print();
+
+		cout << " \nvezesJogadas: " << jogo1.vezesJogadas << " \nGanhador: " << jogo1.ganhador;
 		
-		if(jogo1.vezesJogadas >= 3) ganhador = jogo1.verificarGanhador();
-		cout << " \nvezesJogadas: " << jogo1.vezesJogadas << " \nGanhador: " << ganhador;
-		
-		if(ganhador != 0) break;
+		if(jogo1.ganhador != 0) break;
 		
 	};
 
-	if(ganhador == 0) cout << "\n VELHAAAA " << endl;
-	else if(ganhador == jogo1.jogador) cout << "\n Jogador Ganhou!!! " << endl;
-	else if(ganhador == jogo1.CPU) cout << "\n CPU Ganhou!!! " << endl;
+	if(jogo1.ganhador == 0) cout << "\n VELHAAAA " << endl;
+	else if(jogo1.ganhador == jogo1.jogador) cout << "\n Jogador Ganhou!!! " << endl;
+	else if(jogo1.ganhador == jogo1.CPU) cout << "\n CPU Ganhou!!! " << endl;
 	
 	return 0;
 }
