@@ -1,0 +1,19 @@
+int loopVenc = 0;
+if(i%3 == 0){
+	int y = 0, x = 0;
+	for(int AI = 0; AI<=3; AI++){
+		if(map[mobCoordX][mobCoordY + AI] != 0 && map[mobCoordX][mobCoordY + AI] != 4) y++;
+		if(map[mobCoordX][mobCoordY - AI] != 0 && map[mobCoordX][mobCoordY - AI] != 4) y++;
+
+		if(map[mobCoordX + AI][mobCoordY] != 0 && map[mobCoordX + AI][mobCoordY] != 4) x++;
+		if(map[mobCoordX - AI][mobCoordY] != 0 && map[mobCoordX - AI][mobCoordY] != 4) x++;
+	}
+	if(x >= y){
+		randMin = BAIXO_MIN; 
+		randMax = CIMA_MAX;
+	}
+	else{
+		randMin = FRENTE_MIN; 
+		randMax = TRAS_MAX;
+	}
+}
